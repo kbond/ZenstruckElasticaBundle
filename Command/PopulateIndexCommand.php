@@ -29,7 +29,6 @@ class PopulateIndexCommand extends Command
             ->setName('zenstruck:elastica:populate-index')
             ->setDescription('Populates an index.')
             ->addOption('chunk-size', null, InputOption::VALUE_REQUIRED, 'The number of documents to add at once.', 500);
-        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -44,7 +43,7 @@ class PopulateIndexCommand extends Command
         $index->request('_query', Request::DELETE, array(), array('q' => '*:*'));
         $index->request('_optimize', Request::POST, array(), array(
                 'wait_for_merge' => 'false',
-                'only_expunge_deletes' => 'true'
+                'only_expunge_deletes' => 'true',
             )
         );
 

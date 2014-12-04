@@ -14,7 +14,7 @@ class ZenstruckElasticaExtensionTest extends AbstractExtensionTestCase
     {
         $this->load(array(
                 'client' => array(),
-                'index' => array('name' => 'foo')
+                'index' => array('name' => 'foo'),
             ));
         $this->compile();
 
@@ -28,7 +28,7 @@ class ZenstruckElasticaExtensionTest extends AbstractExtensionTestCase
     {
         $this->load(array(
                 'client' => array(),
-                'index' => array('name' => 'foo', 'settings' => array('foo'))
+                'index' => array('name' => 'foo', 'settings' => array('foo')),
             ));
         $this->compile();
 
@@ -41,8 +41,8 @@ class ZenstruckElasticaExtensionTest extends AbstractExtensionTestCase
                 'client' => array(),
                 'index' => array('name' => 'foo'),
                 'types' => array(
-                    'bar' => array('service' => 'bar_service')
-                )
+                    'bar' => array('service' => 'bar_service'),
+                ),
             ));
         $this->compile();
 

@@ -3,7 +3,6 @@
 namespace Zenstruck\ElasticaBundle;
 
 use Elastica\Document;
-use Elastica\Type;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
