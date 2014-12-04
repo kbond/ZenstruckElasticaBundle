@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="zenstruck_elastica.client.class">Elastica\Client</parameter>
+        <parameter key="zenstruck_elastica.index.class">Elastica\Index</parameter>
+        <parameter key="zenstruck_elastica.type.class">Elastica\Type</parameter>
+        <parameter key="zenstruck_elastica.index_context.class">Zenstruck\ElasticaBundle\IndexContext</parameter>
+        <parameter key="zenstruck_elastica.type_context.class">Zenstruck\ElasticaBundle\TypeContext</parameter>
+        <parameter key="zenstruck_elastica.command.populate_index.class">Zenstruck\ElasticaBundle\Command\PopulateIndexCommand</parameter>
+    </parameters>
+
+    <services>
+        <service id="zenstruck_elastica.client" class="%zenstruck_elastica.client.class%" public="false">
+            <argument>%zenstruck_elastica.client.config%</argument>
+        </service>
+        <service id="zenstruck_elastica.index" class="%zenstruck_elastica.index.class%" public="false">
+            <argument type="service" id="zenstruck_elastica.client" />
+            <argument>%zenstruck_elastica.index.name%</argument>
+        </service>
+        <service id="zenstruck_elastica.type" class="%zenstruck_elastica.type.class%" abstract="true" public="false">
+            <argument type="service" id="zenstruck_elastica.index" />
+        </service>
+        <service id="zenstruck_elastica.index_context" class="%zenstruck_elastica.index_context.class%" public="false">
+            <argument type="service" id="zenstruck_elastica.index" />
+            <argument /> <!-- type_contexts -->
+            <argument>%zenstruck_elastica.index_settings%</argument>
+        </service>
+        <service id="zenstruck_elastica.type_context" class="%zenstruck_elastica.type_context.class%" abstract="true" public="false" />
+        <service id="zenstruck_elastica.command.populate_index" class="%zenstruck_elastica.command.populate_index.class%">
+            <argument type="service" id="zenstruck_elastica.index_context" />
+            <tag name="console.command" />
+        </service>
+    </services>
+</container>

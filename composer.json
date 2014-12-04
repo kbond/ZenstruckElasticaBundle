@@ -1,0 +1,26 @@
+{
+    "name": "zenstruck/elastica-bundle",
+    "description": "Lightweight Symfony bundle wrapping Elastica.",
+    "keywords": ["search", "elastica"],
+    "license": "MIT",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Kevin Bond",
+            "email": "kevinbond@gmail.com",
+            "homepage": "http://zenstruck.com"
+        }
+    ],
+    "require": {
+        "ruflin/elastica": "~1.2",
+        "symfony/framework-bundle": "~2.4"
+    },
+    "require-dev": {
+        "symfony/console": "~2.4",
+        "mockery/mockery": "~0.9",
+        "matthiasnoback/symfony-dependency-injection-test": "~0.7"
+    },
+    "autoload": {
+        "psr-4": { "Zenstruck\\ElasticaBundle\\": "" }
+    }
+}
