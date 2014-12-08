@@ -16,6 +16,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('zenstruck_elastica');
         $rootNode
             ->children()
+                ->booleanNode('logging')->defaultFalse()->end()
                 ->variableNode('client')
                     ->isRequired()
                     ->validate()

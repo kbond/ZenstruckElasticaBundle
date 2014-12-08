@@ -22,6 +22,28 @@ class ZenstruckElasticaExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasService('zenstruck_elastica.index');
         $this->assertContainerBuilderHasService('zenstruck_elastica.index_context');
         $this->assertNull($this->container->getParameter('zenstruck_elastica.index_settings'));
+
+        $clientDefinition = $this->container->getDefinition('zenstruck_elastica.client');
+
+        $this->assertFalse($clientDefinition->hasMethodCall('setLogger'));
+        $this->assertFalse($clientDefinition->hasTag('monolog.logger'));
+    }
+
+    public function testClientWithLogging()
+    {
+        $this->load(array(
+                'logging' => true,
+                'client' => array(),
+                'index' => array('name' => 'foo'),
+            ));
+        $this->compile();
+
+        $this->assertContainerBuilderHasService('zenstruck_elastica.client');
+
+        $clientDefinition = $this->container->getDefinition('zenstruck_elastica.client');
+
+        $this->assertTrue($clientDefinition->hasMethodCall('setLogger'));
+        $this->assertTrue($clientDefinition->hasTag('monolog.logger'));
     }
 
     public function testIndexSettings()

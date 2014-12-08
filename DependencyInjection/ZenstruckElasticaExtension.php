@@ -26,6 +26,12 @@ class ZenstruckElasticaExtension extends ConfigurableExtension
         $container->setParameter('zenstruck_elastica.index.name', $mergedConfig['index']['name']);
         $container->setParameter('zenstruck_elastica.index_settings', $mergedConfig['index']['settings']);
 
+        if ($mergedConfig['logging']) {
+            $client = $container->getDefinition('zenstruck_elastica.client');
+            $client->addMethodCall('setLogger', array(new Reference('logger')));
+            $client->addTag('monolog.logger', array('channel' => 'elastica'));
+        }
+
         $typeContexts = array();
 
         foreach ($mergedConfig['types'] as $alias => $config) {
