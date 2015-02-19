@@ -61,6 +61,9 @@ class PopulateIndexCommand extends Command
             if ($type->exists()) {
                 $output->writeln('  Deleting.');
                 $type->delete();
+
+                // delay to ensure type is deleted
+                sleep(2);
             }
 
             $output->writeln('  Creating mapping.');
