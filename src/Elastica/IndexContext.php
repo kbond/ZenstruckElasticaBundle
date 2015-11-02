@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenstruck\ElasticaBundle;
+namespace Zenstruck\ElasticaBundle\Elastica;
 
 use Elastica\Index;
 

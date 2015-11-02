@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Zenstruck\ElasticaBundle\IndexContext;
+use Zenstruck\ElasticaBundle\Elastica\IndexContext;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>

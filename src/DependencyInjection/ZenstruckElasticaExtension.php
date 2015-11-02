@@ -40,9 +40,15 @@ class ZenstruckElasticaExtension extends ConfigurableExtension
             $typeId = 'zenstruck_elastica.type.'.$alias;
             $container->setDefinition($typeId, $type);
 
+            $mapping = $config['mapping'];
+
+            if (!is_array($mapping)) {
+                $mapping = new Reference($mapping);
+            }
+
             $typeContext = new DefinitionDecorator('zenstruck_elastica.type_context');
             $typeContext->setArguments(
-                array(new Reference($typeId), new Reference($config['service']), $config['mapping'])
+                array(new Reference($typeId), new Reference($config['service']), $mapping)
             );
             $typeContextId = 'zenstruck_elastica.type_context.'.$alias;
             $container->setDefinition($typeContextId, $typeContext);

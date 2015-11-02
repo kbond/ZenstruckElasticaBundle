@@ -12,7 +12,10 @@ use Zenstruck\ElasticaBundle\Command\PopulateIndexCommand;
  */
 class PopulateIndexCommandTest extends \PHPUnit_Framework_TestCase
 {
-    public function testExecute()
+    /**
+     * @test
+     */
+    public function can_execute()
     {
         $index = m::mock('Elastica\Index');
         $index->shouldReceive('exists')->andReturn(true);
@@ -28,12 +31,12 @@ class PopulateIndexCommandTest extends \PHPUnit_Framework_TestCase
         $type->shouldReceive('setMapping')->with(array('mapping'));
         $type->shouldReceive('addDocuments')->with(m::type('array'));
 
-        $typeContext = m::mock('Zenstruck\ElasticaBundle\TypeContext');
+        $typeContext = m::mock('Zenstruck\ElasticaBundle\Elastica\TypeContext');
         $typeContext->shouldReceive('getType')->andReturn($type);
         $typeContext->shouldReceive('getMapping')->andReturn(array('mapping'));
         $typeContext->shouldReceive('getDocuments')->andReturn(array('foo', 'bar', 'baz'));
 
-        $indexContext = m::mock('Zenstruck\ElasticaBundle\IndexContext');
+        $indexContext = m::mock('Zenstruck\ElasticaBundle\Elastica\IndexContext');
         $indexContext->shouldReceive('getIndex')->andReturn($index);
         $indexContext->shouldReceive('getTypeContexts')->andReturn(array('foo' => $typeContext));
         $indexContext->shouldReceive('getSettings')->andReturn(array('settings'));
@@ -60,14 +63,16 @@ class PopulateIndexCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @expectedException \RuntimeException
      */
-    public function testExecuteNoIndex()
+    public function execute_fails_with_no_index()
     {
         $index = m::mock('Elastica\Index');
         $index->shouldReceive('exists')->andReturn(false);
 
-        $indexContext = m::mock('Zenstruck\ElasticaBundle\IndexContext');
+        $indexContext = m::mock('Zenstruck\ElasticaBundle\Elastica\IndexContext');
         $indexContext->shouldReceive('getIndex')->andReturn($index);
 
         $container = m::mock('Symfony\Component\DependencyInjection\ContainerInterface');

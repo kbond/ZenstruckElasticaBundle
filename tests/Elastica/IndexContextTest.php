@@ -1,16 +1,19 @@
 <?php
 
-namespace Zenstruck\ElasticaBundle\Tests;
+namespace Zenstruck\ElasticaBundle\Tests\Elastica;
 
 use Mockery as m;
-use Zenstruck\ElasticaBundle\IndexContext;
+use Zenstruck\ElasticaBundle\Elastica\IndexContext;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 class IndexContextTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetters()
+    /**
+     * @test
+     */
+    public function can_access_properties()
     {
         $context = new IndexContext(m::mock('Elastica\Index'), array('foo'), array('bar'));
 
