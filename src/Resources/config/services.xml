@@ -10,7 +10,6 @@
         <parameter key="zenstruck_elastica.type.class">Elastica\Type</parameter>
         <parameter key="zenstruck_elastica.index_context.class">Zenstruck\ElasticaBundle\IndexContext</parameter>
         <parameter key="zenstruck_elastica.type_context.class">Zenstruck\ElasticaBundle\TypeContext</parameter>
-        <parameter key="zenstruck_elastica.command.populate_index.class">Zenstruck\ElasticaBundle\Command\PopulateIndexCommand</parameter>
     </parameters>
 
     <services>
