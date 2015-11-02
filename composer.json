@@ -22,6 +22,9 @@
         "matthiasnoback/symfony-dependency-injection-test": "~0.7"
     },
     "autoload": {
-        "psr-4": { "Zenstruck\\ElasticaBundle\\": "" }
+        "psr-4": { "Zenstruck\\ElasticaBundle\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Zenstruck\\ElasticaBundle\\Tests\\": "tests/" }
     }
 }
