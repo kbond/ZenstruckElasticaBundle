@@ -30,9 +30,5 @@
             <argument>%zenstruck_elastica.index_settings%</argument>
         </service>
         <service id="zenstruck_elastica.type_context" class="%zenstruck_elastica.type_context.class%" abstract="true" public="false" />
-        <service id="zenstruck_elastica.command.populate_index" class="%zenstruck_elastica.command.populate_index.class%">
-            <argument type="service" id="zenstruck_elastica.index_context" />
-            <tag name="console.command" />
-        </service>
     </services>
 </container>

@@ -38,8 +38,14 @@ class PopulateIndexCommandTest extends \PHPUnit_Framework_TestCase
         $indexContext->shouldReceive('getTypeContexts')->andReturn(array('foo' => $typeContext));
         $indexContext->shouldReceive('getSettings')->andReturn(array('settings'));
 
+        $container = m::mock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container->shouldReceive('get')->with('zenstruck_elastica.index_context')->andReturn($indexContext);
+
+        $command = new PopulateIndexCommand();
+        $command->setContainer($container);
+
         $application = new Application();
-        $application->add(new PopulateIndexCommand($indexContext));
+        $application->add($command);
         $commandTester = new CommandTester($application->find('zenstruck:elastica:populate-index'));
 
         $commandTester->execute(
@@ -64,8 +70,14 @@ class PopulateIndexCommandTest extends \PHPUnit_Framework_TestCase
         $indexContext = m::mock('Zenstruck\ElasticaBundle\IndexContext');
         $indexContext->shouldReceive('getIndex')->andReturn($index);
 
+        $container = m::mock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container->shouldReceive('get')->with('zenstruck_elastica.index_context')->andReturn($indexContext);
+
+        $command = new PopulateIndexCommand();
+        $command->setContainer($container);
+
         $application = new Application();
-        $application->add(new PopulateIndexCommand($indexContext));
+        $application->add($command);
         $commandTester = new CommandTester($application->find('zenstruck:elastica:populate-index'));
 
         $commandTester->execute(

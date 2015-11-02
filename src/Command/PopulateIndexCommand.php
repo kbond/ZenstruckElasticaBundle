@@ -3,7 +3,7 @@
 namespace Zenstruck\ElasticaBundle\Command;
 
 use Elastica\Request;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,17 +12,8 @@ use Zenstruck\ElasticaBundle\IndexContext;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class PopulateIndexCommand extends Command
+class PopulateIndexCommand extends ContainerAwareCommand
 {
-    private $indexContext;
-
-    public function __construct(IndexContext $indexContext)
-    {
-        $this->indexContext = $indexContext;
-
-        parent::__construct();
-    }
-
     protected function configure()
     {
         $this
@@ -33,7 +24,9 @@ class PopulateIndexCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $index = $this->indexContext->getIndex();
+        /** @var IndexContext $indexContext */
+        $indexContext = $this->getContainer()->get('zenstruck_elastica.index_context');
+        $index = $indexContext->getIndex();
 
         if (!$index->exists()) {
             throw new \RuntimeException('Index does not exist.');
@@ -47,14 +40,14 @@ class PopulateIndexCommand extends Command
             )
         );
 
-        if ($settings = $this->indexContext->getSettings()) {
+        if ($settings = $indexContext->getSettings()) {
             $output->writeln('Configuring index settings.');
             $index->close();
             $index->setSettings($settings);
             $index->open();
         }
 
-        foreach ($this->indexContext->getTypeContexts() as $alias => $typeContext) {
+        foreach ($indexContext->getTypeContexts() as $alias => $typeContext) {
             $type = $typeContext->getType();
             $output->writeln(sprintf('Configuring type <comment>%s</comment>.', $alias));
 
