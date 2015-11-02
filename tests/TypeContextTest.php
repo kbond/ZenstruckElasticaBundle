@@ -42,7 +42,7 @@ class TypeContextTest extends \PHPUnit_Framework_TestCase
         $provider = m::mock('Zenstruck\ElasticaBundle\DocumentProvider', 'Zenstruck\ElasticaBundle\MappingProvider');
         $provider->shouldReceive('getMapping')->andReturn(array('foo'));
 
-        $context = new TypeContext(m::mock('Elastica\Type'), $provider,  array('bar'));
+        $context = new TypeContext(m::mock('Elastica\Type'), $provider, array('bar'));
 
         $this->assertSame(array('foo'), $context->getMapping());
     }
