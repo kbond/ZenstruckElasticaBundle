@@ -17,6 +17,8 @@ class PopulateIndexCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function can_execute()
     {
+        $this->markTestIncomplete();
+
         $index = m::mock('Elastica\Index');
         $index->shouldReceive('exists')->andReturn(true);
         $index->shouldReceive('request')->twice();
@@ -69,6 +71,8 @@ class PopulateIndexCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function execute_fails_with_no_index()
     {
+        $this->markTestIncomplete();
+
         $index = m::mock('Elastica\Index');
         $index->shouldReceive('exists')->andReturn(false);
 
