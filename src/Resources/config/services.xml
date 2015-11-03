@@ -4,6 +4,11 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="zenstruck_elastica.index_manager" class="Zenstruck\ElasticaBundle\Elastica\IndexManager">
+            <argument type="service" id="zenstruck_elastica.index_context"/>
+            <argument type="service" id="logger" on-invalid="null" />
+            <tag name="monolog.logger" channel="elastica" />
+        </service>
         <service id="zenstruck_elastica.client" class="Elastica\Client" public="false">
             <argument>%zenstruck_elastica.client.config%</argument>
         </service>
