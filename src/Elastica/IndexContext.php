@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenstruck\ElasticaBundle;
+namespace Zenstruck\ElasticaBundle\Elastica;
 
 use Elastica\Index;
 
@@ -9,28 +9,36 @@ use Elastica\Index;
  */
 class IndexContext
 {
-    private $index;
+    private $alias;
     private $typeContexts;
     private $settings;
+    private $indicies;
 
     /**
-     * @param Index         $index
+     * @param Index         $alias
      * @param TypeContext[] $typeContexts
      * @param array         $settings
      */
-    public function __construct(Index $index, array $typeContexts, array $settings = null)
+    public function __construct(Index $alias, array $typeContexts, array $settings = null)
     {
-        $this->index = $index;
+        $this->alias = $alias;
         $this->typeContexts = $typeContexts;
         $this->settings = $settings;
+
+        $client = $alias->getClient();
+
+        $this->indicies = array(
+            new Index($client, $alias->getName().'1'),
+            new Index($client, $alias->getName().'2'),
+        );
     }
 
     /**
      * @return Index
      */
-    public function getIndex()
+    public function getAlias()
     {
-        return $this->index;
+        return $this->alias;
     }
 
     /**
@@ -47,5 +55,13 @@ class IndexContext
     public function getSettings()
     {
         return $this->settings;
+    }
+
+    /**
+     * @return Index[]
+     */
+    public function getIndicies()
+    {
+        return $this->indicies;
     }
 }
