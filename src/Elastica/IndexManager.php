@@ -2,6 +2,7 @@
 
 namespace Zenstruck\ElasticaBundle\Elastica;
 
+use Elastica\Index;
 use Zenstruck\ElasticaBundle\Exception\RuntimeException;
 
 /**
@@ -9,7 +10,7 @@ use Zenstruck\ElasticaBundle\Exception\RuntimeException;
  */
 class IndexManager
 {
-    private $indexContext;
+    protected $indexContext;
 
     public function __construct(IndexContext $indexContext)
     {
@@ -23,12 +24,16 @@ class IndexManager
      */
     public function create()
     {
-        $index = $this->indexContext->getIndex();
+        $indicies = $this->indexContext->getIndicies();
 
-        if ($index->exists()) {
-            throw RuntimeException::indexExists($index);
+        foreach ($indicies as $index) {
+            if ($index->exists()) {
+                throw RuntimeException::indexExists($index);
+            }
         }
 
+        /** @var Index $index */
+        $index = reset($indicies);
         $args = array();
 
         foreach ($this->indexContext->getTypeContexts() as $typeContext) {
@@ -40,21 +45,20 @@ class IndexManager
         }
 
         $index->create($args);
+        $index->addAlias($this->indexContext->getAlias()->getName(), true);
     }
 
     /**
-     * Deletes the elasticsearch index.
+     * Deletes the elasticsearch indices.
      *
      * @throws RuntimeException
      */
     public function delete()
     {
-        $index = $this->indexContext->getIndex();
-
-        if (!$index->exists()) {
-            throw RuntimeException::indexNotExists($index);
+        foreach ($this->indexContext->getIndicies() as $index) {
+            if ($index->exists()) {
+                $index->delete();
+            }
         }
-
-        $index->delete();
     }
 }

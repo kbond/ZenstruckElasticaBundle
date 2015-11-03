@@ -18,14 +18,4 @@ class RuntimeException extends \RuntimeException implements Exception
     {
         return new self(sprintf('Index "%s" already exists.', $index->getName()));
     }
-
-    /**
-     * @param Index $index
-     *
-     * @return RuntimeException
-     */
-    public static function indexNotExists(Index $index)
-    {
-        return new self(sprintf('Index "%s" does not exist.', $index->getName()));
-    }
 }

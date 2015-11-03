@@ -14,22 +14,25 @@ use Zenstruck\ElasticaBundle\Elastica\TypeContext;
  */
 class IndexManagerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Client */
-    private $client;
+    /** @var Index */
+    private $alias;
 
     /** @var Index */
-    private $index;
+    private $index1;
+
+    /** @var Index */
+    private $index2;
 
     /**
      * @test
      */
     public function can_create_index()
     {
-        $typeContext = new TypeContext(new Type($this->index, 'foo'), \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'), array(
+        $typeContext = new TypeContext(new Type($this->alias, 'foo'), \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'), array(
             'title' => array('type' => 'string', 'analyzer' => 'stem'),
         ));
 
-        $indexContext = new IndexContext($this->index, array($typeContext), array(
+        $indexContext = new IndexContext($this->alias, array($typeContext), array(
             'analysis' => array(
                 'analyzer' => array(
                     'stem' => array(
@@ -42,16 +45,23 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
 
         $indexManager = new IndexManager($indexContext);
 
-        $this->assertFalse($this->index->exists());
+        $this->assertFalse($this->alias->exists());
+        $this->assertFalse($this->index1->exists());
+        $this->assertFalse($this->index2->exists());
         $indexManager->create();
-        $this->assertTrue($this->index->exists());
+        $this->assertTrue($this->alias->exists());
+        $this->assertTrue($this->index1->exists());
+        $this->assertFalse($this->index2->exists());
 
-        $settings = $this->index->request('/_settings', 'GET')->getData();
-        $this->assertSame(array('standard', 'lowercase'), $settings['zenstruck_elastica']['settings']['index']['analysis']['analyzer']['stem']['filter']);
+        $aliases = $this->alias->request('/_aliases', 'GET')->getData();
+        $this->assertSame(array(), $aliases['zenstruck_elastica1']['aliases']['zenstruck_elastica']);
 
-        $mapping = $this->index->request('/_mapping', 'GET')->getData();
-        $this->assertSame('string', $mapping['zenstruck_elastica']['mappings']['foo']['properties']['title']['type']);
-        $this->assertSame('stem', $mapping['zenstruck_elastica']['mappings']['foo']['properties']['title']['analyzer']);
+        $settings = $this->alias->request('/_settings', 'GET')->getData();
+        $this->assertSame(array('standard', 'lowercase'), $settings['zenstruck_elastica1']['settings']['index']['analysis']['analyzer']['stem']['filter']);
+
+        $mapping = $this->alias->request('/_mapping', 'GET')->getData();
+        $this->assertSame('string', $mapping['zenstruck_elastica1']['mappings']['foo']['properties']['title']['type']);
+        $this->assertSame('stem', $mapping['zenstruck_elastica1']['mappings']['foo']['properties']['title']['analyzer']);
     }
 
     /**
@@ -59,46 +69,53 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function can_delete_index()
     {
-        $indexManager = new IndexManager(new IndexContext($this->index, array()));
+        $indexManager = new IndexManager(new IndexContext($this->alias, array()));
 
         $indexManager->create();
-        $this->assertTrue($this->index->exists());
+        $this->assertTrue($this->alias->exists());
+        $this->assertTrue($this->index1->exists());
+        $this->assertFalse($this->index2->exists());
         $indexManager->delete();
-        $this->assertFalse($this->index->exists());
+        $this->assertFalse($this->alias->exists());
+        $this->assertFalse($this->index1->exists());
+        $this->assertFalse($this->index2->exists());
     }
 
     /**
      * @test
      *
      * @expectedException \Zenstruck\ElasticaBundle\Exception\RuntimeException
-     * @expectedExceptionMessage Index "zenstruck_elastica" does not exist.
-     */
-    public function cannot_delete_non_existant_index()
-    {
-        $indexManager = new IndexManager(new IndexContext($this->index, array()));
-        $indexManager->delete();
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException \Zenstruck\ElasticaBundle\Exception\RuntimeException
-     * @expectedExceptionMessage Index "zenstruck_elastica" already exists.
+     * @expectedExceptionMessage Index "zenstruck_elastica1" already exists.
      */
     public function cannot_create_index_that_already_exists()
     {
-        $indexManager = new IndexManager(new IndexContext($this->index, array()));
+        $indexManager = new IndexManager(new IndexContext($this->alias, array()));
         $indexManager->create();
         $indexManager->create();
     }
 
     public function setUp()
     {
-        $this->client = new Client(array('host' => 'localhost', 'port' => 9200));
-        $this->index = new Index($this->client, 'zenstruck_elastica');
+        $client = new Client(array('host' => 'localhost', 'port' => 9200));
+        $this->alias = new Index($client, 'zenstruck_elastica');
+        $this->index1 = new Index($client, 'zenstruck_elastica1');
+        $this->index2 = new Index($client, 'zenstruck_elastica2');
 
-        if ($this->index->exists()) {
-            $this->index->delete();
+        $this->tearDown();
+    }
+
+    protected function tearDown()
+    {
+        if ($this->alias->exists()) {
+            $this->alias->delete();
+        }
+
+        if ($this->index1->exists()) {
+            $this->index1->delete();
+        }
+
+        if ($this->index2->exists()) {
+            $this->index2->delete();
         }
     }
 }
