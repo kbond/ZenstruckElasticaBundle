@@ -134,7 +134,7 @@ class IndexManager
         $indexName = $type->getIndex()->getName();
         $count = 0;
 
-        $this->logInfo(sprintf('Adding %d documents to type "%s" on index "%s".',$total, $typeName, $indexName));
+        $this->logInfo(sprintf('Adding %d documents to type "%s" on index "%s".', $total, $typeName, $indexName));
 
         foreach (array_chunk($documents, self::DEFAULT_CHUNK_SIZE) as $chunks) {
             $type->addDocuments($chunks);
