@@ -16,7 +16,10 @@ class TypeContextTest extends \PHPUnit_Framework_TestCase
      */
     public function can_get_type()
     {
-        $context = new TypeContext(\Mockery::mock('Elastica\Type'), \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'), array('foo'));
+        $context = new TypeContext(
+            $this->getMock('Elastica\Type', array(), array(), '', false),
+            $this->getMock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'),
+            array('foo'));
 
         $this->assertInstanceOf('Elastica\Type', $context->getType());
     }
@@ -27,10 +30,12 @@ class TypeContextTest extends \PHPUnit_Framework_TestCase
     public function can_get_documents()
     {
         $documents = array(new Document());
-        $provider = \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider');
-        $provider->shouldReceive('getDocuments')->andReturn($documents);
+        $provider = $this->getMock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider');
+        $provider->expects($this->once())
+            ->method('getDocuments')
+            ->willReturn($documents);
 
-        $context = new TypeContext(\Mockery::mock('Elastica\Type'), $provider, array('foo'));
+        $context = new TypeContext($this->getMock('Elastica\Type', array(), array(), '', false), $provider, array('foo'));
         $this->assertSame($documents, $context->getDocuments());
     }
 
@@ -42,8 +47,8 @@ class TypeContextTest extends \PHPUnit_Framework_TestCase
     public function can_get_mapping($mapping, $expectedResult)
     {
         $context = new TypeContext(
-            \Mockery::mock('Elastica\Type'),
-            \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'),
+            $this->getMock('Elastica\Type', array(), array(), '', false),
+            $this->getMock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'),
             $mapping
         );
 
@@ -57,13 +62,17 @@ class TypeContextTest extends \PHPUnit_Framework_TestCase
      */
     public function fails_with_no_mapping()
     {
-        $context = new TypeContext(\Mockery::mock('Elastica\Type'), \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'), null);
+        $context = new TypeContext(
+            $this->getMock('Elastica\Type', array(), array(), '', false),
+            $this->getMock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider'), null);
     }
 
-    public static function mappingProvider()
+    public function mappingProvider()
     {
-        $mappingProvider = \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\MappingProvider');
-        $mappingProvider->shouldReceive('getMapping')->andReturn(array('foo'));
+        $mappingProvider = $this->getMock('Zenstruck\ElasticaBundle\Elastica\MappingProvider');
+        $mappingProvider->expects($this->once())
+            ->method('getMapping')
+            ->willReturn(array('foo'));
 
         $mapping = new Mapping();
 

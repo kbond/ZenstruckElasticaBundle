@@ -36,12 +36,15 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->index1->exists());
         $this->assertFalse($this->index2->exists());
 
-        $logger = \Mockery::mock('Psr\Log\LoggerInterface');
-        $logger->shouldReceive('info')->with('Creating index "zenstruck_elastica1".', array());
-        $logger->shouldReceive('info')->with('Adding mapping for type "foo" on index "zenstruck_elastica1".', array());
-        $logger->shouldReceive('info')->with('Adding 1 documents to type "foo" on index "zenstruck_elastica1".', array());
-        $logger->shouldReceive('info')->with('1/1 documents added to type "foo" on index "zenstruck_elastica1".', array());
-        $logger->shouldReceive('info')->with('Adding alias "zenstruck_elastica" for index "zenstruck_elastica1".', array());
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger->method('info')
+            ->withConsecutive(
+                array('Creating index "zenstruck_elastica1".', array()),
+                array('Adding mapping for type "foo" on index "zenstruck_elastica1".', array()),
+                array('Adding 1 documents to type "foo" on index "zenstruck_elastica1".', array()),
+                array('1/1 documents added to type "foo" on index "zenstruck_elastica1".', array()),
+                array('Adding alias "zenstruck_elastica" for index "zenstruck_elastica1".', array())
+            );
 
         $this->createIndexManager($logger)->create();
         $this->assertTrue($this->alias->exists());
@@ -67,13 +70,16 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->can_create_index();
 
-        $logger = \Mockery::mock('Psr\Log\LoggerInterface');
-        $logger->shouldReceive('info')->with('Creating new index "zenstruck_elastica2".', array());
-        $logger->shouldReceive('info')->with('Adding mapping for type "foo" on index "zenstruck_elastica2".', array());
-        $logger->shouldReceive('info')->with('Adding 1 documents to type "foo" on index "zenstruck_elastica2".', array());
-        $logger->shouldReceive('info')->with('1/1 documents added to type "foo" on index "zenstruck_elastica2".', array());
-        $logger->shouldReceive('info')->with('Swapping alias "zenstruck_elastica" from index "zenstruck_elastica1" to index "zenstruck_elastica2".', array());
-        $logger->shouldReceive('info')->with('Deleting old index "zenstruck_elastica1".', array());
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger->method('info')
+            ->withConsecutive(
+                array('Creating new index "zenstruck_elastica2".', array()),
+                array('Adding mapping for type "foo" on index "zenstruck_elastica2".', array()),
+                array('Adding 1 documents to type "foo" on index "zenstruck_elastica2".', array()),
+                array('1/1 documents added to type "foo" on index "zenstruck_elastica2".', array()),
+                array('Swapping alias "zenstruck_elastica" from index "zenstruck_elastica1" to index "zenstruck_elastica2".', array()),
+                array('Deleting old index "zenstruck_elastica1".', array())
+            );
 
         $this->createIndexManager($logger)->reindex();
         $this->assertTrue($this->alias->exists());
@@ -102,8 +108,8 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->index1->exists());
         $this->assertFalse($this->index2->exists());
 
-        $logger = \Mockery::mock('Psr\Log\LoggerInterface');
-        $logger->shouldReceive('info')->with('Deleting index "zenstruck_elastica1".', array());
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger->expects($this->once())->method('info')->with('Deleting index "zenstruck_elastica1".', array());
 
         $this->createIndexManager($logger)->delete();
         $this->assertFalse($this->alias->exists());
@@ -175,9 +181,10 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
 
     private function createIndexManager(LoggerInterface $logger = null)
     {
-        $documentProvider = \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider');
-        $documentProvider->shouldReceive('getDocuments')
-            ->andReturn(array(new Document(1, array('title' => 'my document title'))));
+        $documentProvider = $this->getMock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider');
+        $documentProvider->expects($this->any())
+            ->method('getDocuments')
+            ->willReturn(array(new Document(1, array('title' => 'my document title'))));
 
         $typeContext = new TypeContext(new Type($this->alias, self::TYPE_NAME), $documentProvider, array(
             'title' => array('type' => 'string', 'analyzer' => 'stem'),

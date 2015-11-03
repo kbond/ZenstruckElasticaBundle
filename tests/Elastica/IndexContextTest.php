@@ -15,7 +15,7 @@ class IndexContextTest extends \PHPUnit_Framework_TestCase
      */
     public function can_access_properties()
     {
-        $client = \Mockery::mock('Elastica\Client');
+        $client = $this->getMock('Elastica\Client', array(), array(), '', false);
         $alias = new Index($client, 'my_index');
         $context = new IndexContext($alias, array('foo'), array('bar'));
 
