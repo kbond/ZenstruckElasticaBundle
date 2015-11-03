@@ -5,6 +5,7 @@ namespace Zenstruck\ElasticaBundle\Elastica;
 use Elastica\Document;
 use Elastica\Index;
 use Elastica\Type;
+use Psr\Log\LoggerInterface;
 use Zenstruck\ElasticaBundle\Exception\RuntimeException;
 
 /**
@@ -14,11 +15,13 @@ class IndexManager
 {
     const DEFAULT_CHUNK_SIZE = 500;
 
-    protected $indexContext;
+    private $indexContext;
+    private $logger;
 
-    public function __construct(IndexContext $indexContext)
+    public function __construct(IndexContext $indexContext, LoggerInterface $logger = null)
     {
         $this->indexContext = $indexContext;
+        $this->logger = $logger;
     }
 
     /**
@@ -39,8 +42,12 @@ class IndexManager
         /** @var Index $index */
         $index = reset($indicies);
 
+        $this->logInfo(sprintf('Creating index "%s".', $index->getName()));
         $this->doCreate($index);
-        $index->addAlias($this->indexContext->getAlias()->getName(), true);
+
+        $aliasName = $this->indexContext->getAlias()->getName();
+        $this->logInfo(sprintf('Adding alias "%s" for index "%s".', $aliasName, $index->getName()));
+        $index->addAlias($aliasName, true);
     }
 
     /**
@@ -50,15 +57,18 @@ class IndexManager
      */
     public function reindex()
     {
-        $currentIndex = $this->getCurrentIndex();
-        $freshIndex = $this->getFreshIndex();
+        $oldIndex = $this->getCurrentIndex();
+        $newIndex = $this->getFreshIndex();
 
-        // create fresh index and add alias
-        $this->doCreate($freshIndex);
-        $freshIndex->addAlias($this->indexContext->getAlias()->getName(), true);
+        $this->logInfo(sprintf('Creating new index "%s".', $newIndex->getName()));
+        $this->doCreate($newIndex);
 
-        // delete old index
-        $currentIndex->delete();
+        $aliasName = $this->indexContext->getAlias()->getName();
+        $this->logInfo(sprintf('Swapping alias "%s" from index "%s" to index "%s".', $aliasName, $oldIndex->getName(), $newIndex->getName()));
+        $newIndex->addAlias($aliasName, true);
+
+        $this->logInfo(sprintf('Deleting old index "%s".', $oldIndex->getName()));
+        $oldIndex->delete();
     }
 
     /**
@@ -69,10 +79,29 @@ class IndexManager
     public function delete()
     {
         foreach ($this->indexContext->getIndicies() as $index) {
-            if ($index->exists()) {
-                $index->delete();
-            }
+            $this->doDelete($index);
         }
+    }
+
+    private function doDelete(Index $index)
+    {
+        if ($index->exists()) {
+            $this->logInfo(sprintf('Deleting index "%s".', $index->getName()));
+            $index->delete();
+        }
+    }
+
+    /**
+     * @param string $message
+     * @param array  $context
+     */
+    private function logInfo($message, array $context = array())
+    {
+        if (null === $this->logger) {
+            return;
+        }
+
+        $this->logger->info($message, $context);
     }
 
     private function doCreate(Index $index)
@@ -87,6 +116,8 @@ class IndexManager
 
         foreach ($this->indexContext->getTypeContexts() as $typeContext) {
             $type = new Type($index, $typeContext->getType()->getName());
+
+            $this->logInfo(sprintf('Adding mapping for type "%s" on index "%s".', $type->getName(), $index->getName()));
             $type->setMapping($typeContext->getMapping());
             $this->addDocumentsToType($type, $typeContext->getDocuments());
         }
@@ -98,8 +129,23 @@ class IndexManager
      */
     private function addDocumentsToType(Type $type, array $documents)
     {
+        $total = count($documents);
+        $typeName = $type->getName();
+        $indexName = $type->getIndex()->getName();
+        $count = 0;
+
+        $this->logInfo(sprintf('Adding %d documents to type "%s" on index "%s".',$total, $typeName, $indexName));
+
         foreach (array_chunk($documents, self::DEFAULT_CHUNK_SIZE) as $chunks) {
             $type->addDocuments($chunks);
+
+            $count += count($chunks);
+            $this->logInfo(sprintf('%s/%s documents added to type "%s" on index "%s".',
+                $count,
+                $total,
+                $typeName,
+                $indexName
+            ));
         }
     }
 

@@ -6,6 +6,7 @@ use Elastica\Client;
 use Elastica\Document;
 use Elastica\Index;
 use Elastica\Type;
+use Psr\Log\LoggerInterface;
 use Zenstruck\ElasticaBundle\Elastica\IndexContext;
 use Zenstruck\ElasticaBundle\Elastica\IndexManager;
 use Zenstruck\ElasticaBundle\Elastica\TypeContext;
@@ -35,7 +36,14 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->index1->exists());
         $this->assertFalse($this->index2->exists());
 
-        $this->createIndexManager()->create();
+        $logger = \Mockery::mock('Psr\Log\LoggerInterface');
+        $logger->shouldReceive('info')->with('Creating index "zenstruck_elastica1".', array());
+        $logger->shouldReceive('info')->with('Adding mapping for type "foo" on index "zenstruck_elastica1".', array());
+        $logger->shouldReceive('info')->with('Adding 1 documents to type "foo" on index "zenstruck_elastica1".', array());
+        $logger->shouldReceive('info')->with('1/1 documents added to type "foo" on index "zenstruck_elastica1".', array());
+        $logger->shouldReceive('info')->with('Adding alias "zenstruck_elastica" for index "zenstruck_elastica1".', array());
+
+        $this->createIndexManager($logger)->create();
         $this->assertTrue($this->alias->exists());
         $this->assertTrue($this->index1->exists());
         $this->assertFalse($this->index2->exists());
@@ -59,7 +67,15 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->can_create_index();
 
-        $this->createIndexManager()->reindex();
+        $logger = \Mockery::mock('Psr\Log\LoggerInterface');
+        $logger->shouldReceive('info')->with('Creating new index "zenstruck_elastica2".', array());
+        $logger->shouldReceive('info')->with('Adding mapping for type "foo" on index "zenstruck_elastica2".', array());
+        $logger->shouldReceive('info')->with('Adding 1 documents to type "foo" on index "zenstruck_elastica2".', array());
+        $logger->shouldReceive('info')->with('1/1 documents added to type "foo" on index "zenstruck_elastica2".', array());
+        $logger->shouldReceive('info')->with('Swapping alias "zenstruck_elastica" from index "zenstruck_elastica1" to index "zenstruck_elastica2".', array());
+        $logger->shouldReceive('info')->with('Deleting old index "zenstruck_elastica1".', array());
+
+        $this->createIndexManager($logger)->reindex();
         $this->assertTrue($this->alias->exists());
         $this->assertFalse($this->index1->exists());
         $this->assertTrue($this->index2->exists());
@@ -81,13 +97,15 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function can_delete_index()
     {
-        $indexManager = $this->createIndexManager();
-
-        $indexManager->create();
+        $this->createIndexManager()->create();
         $this->assertTrue($this->alias->exists());
         $this->assertTrue($this->index1->exists());
         $this->assertFalse($this->index2->exists());
-        $indexManager->delete();
+
+        $logger = \Mockery::mock('Psr\Log\LoggerInterface');
+        $logger->shouldReceive('info')->with('Deleting index "zenstruck_elastica1".', array());
+
+        $this->createIndexManager($logger)->delete();
         $this->assertFalse($this->alias->exists());
         $this->assertFalse($this->index1->exists());
         $this->assertFalse($this->index2->exists());
@@ -155,7 +173,7 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    private function createIndexManager()
+    private function createIndexManager(LoggerInterface $logger = null)
     {
         $documentProvider = \Mockery::mock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider');
         $documentProvider->shouldReceive('getDocuments')
@@ -176,6 +194,6 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
             ),
         ));
 
-        return new IndexManager($indexContext);
+        return new IndexManager($indexContext, $logger);
     }
 }
