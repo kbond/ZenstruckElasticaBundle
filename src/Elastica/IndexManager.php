@@ -77,22 +77,17 @@ class IndexManager
 
     private function doCreate(Index $index)
     {
-        $indexContext = $this->indexContext;
-        $typeContexts = $indexContext->getTypeContexts();
         $args = array();
 
-        foreach ($typeContexts as $typeContext) {
-            $args['mappings'][$typeContext->getType()->getName()]['properties'] = $typeContext->getMapping();
-        }
-
-        if (null !== $settings = $indexContext->getSettings()) {
+        if (null !== $settings = $this->indexContext->getSettings()) {
             $args['settings'] = $settings;
         }
 
         $index->create($args);
 
-        foreach ($typeContexts as $typeContext) {
+        foreach ($this->indexContext->getTypeContexts() as $typeContext) {
             $type = new Type($index, $typeContext->getType()->getName());
+            $type->setMapping($typeContext->getMapping());
             $this->addDocumentsToType($type, $typeContext->getDocuments());
         }
     }
