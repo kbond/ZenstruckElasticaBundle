@@ -47,7 +47,7 @@ class IndexManager
 
         $aliasName = $this->indexContext->getAlias()->getName();
         $this->logInfo(sprintf('Adding alias "%s" for index "%s".', $aliasName, $index->getName()));
-        $index->addAlias($aliasName, true);
+        $index->addAlias($aliasName);
     }
 
     /**
@@ -65,7 +65,7 @@ class IndexManager
 
         $aliasName = $this->indexContext->getAlias()->getName();
         $this->logInfo(sprintf('Swapping alias "%s" from index "%s" to index "%s".', $aliasName, $oldIndex->getName(), $newIndex->getName()));
-        $newIndex->addAlias($aliasName, true);
+        $newIndex->addAlias($aliasName);
 
         $this->logInfo(sprintf('Deleting old index "%s".', $oldIndex->getName()));
         $oldIndex->delete();
