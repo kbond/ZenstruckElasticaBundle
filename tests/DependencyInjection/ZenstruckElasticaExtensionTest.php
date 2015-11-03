@@ -25,6 +25,7 @@ class ZenstruckElasticaExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasService('zenstruck_elastica.client', 'Elastica\Client');
         $this->assertContainerBuilderHasService('zenstruck_elastica.index', 'Elastica\Index');
         $this->assertContainerBuilderHasService('zenstruck_elastica.index_context', 'Zenstruck\ElasticaBundle\Elastica\IndexContext');
+        $this->assertContainerBuilderHasService('zenstruck_elastica.index_manager', 'Zenstruck\ElasticaBundle\Elastica\IndexManager');
         $this->assertNull($this->container->getParameter('zenstruck_elastica.index_settings'));
 
         $clientDefinition = $this->container->getDefinition('zenstruck_elastica.client');
