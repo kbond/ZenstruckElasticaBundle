@@ -3,19 +3,20 @@
 namespace Zenstruck\ElasticaBundle\Tests\Elastica;
 
 use Elastica\Index;
+use PHPUnit\Framework\TestCase;
 use Zenstruck\ElasticaBundle\Elastica\IndexContext;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class IndexContextTest extends \PHPUnit_Framework_TestCase
+class IndexContextTest extends TestCase
 {
     /**
      * @test
      */
     public function can_access_properties()
     {
-        $client = $this->getMock('Elastica\Client', array(), array(), '', false);
+        $client = $this->createMock('Elastica\Client');
         $alias = new Index($client, 'my_index');
         $context = new IndexContext($alias, array('foo'), array('bar'));
 

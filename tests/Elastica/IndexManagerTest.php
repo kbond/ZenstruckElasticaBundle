@@ -6,6 +6,7 @@ use Elastica\Client;
 use Elastica\Document;
 use Elastica\Index;
 use Elastica\Type;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Zenstruck\ElasticaBundle\Elastica\IndexContext;
 use Zenstruck\ElasticaBundle\Elastica\IndexManager;
@@ -14,7 +15,7 @@ use Zenstruck\ElasticaBundle\Elastica\TypeContext;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class IndexManagerTest extends \PHPUnit_Framework_TestCase
+class IndexManagerTest extends TestCase
 {
     const TYPE_NAME = 'foo';
 
