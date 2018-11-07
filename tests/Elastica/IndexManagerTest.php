@@ -37,7 +37,7 @@ class IndexManagerTest extends TestCase
         $this->assertFalse($this->index1->exists());
         $this->assertFalse($this->index2->exists());
 
-        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger = $this->createMock('Psr\Log\LoggerInterface');
         $logger->method('info')
             ->withConsecutive(
                 array('Creating index "zenstruck_elastica1".', array()),
@@ -71,7 +71,7 @@ class IndexManagerTest extends TestCase
     {
         $this->can_create_index();
 
-        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger = $this->createMock('Psr\Log\LoggerInterface');
         $logger->method('info')
             ->withConsecutive(
                 array('Creating new index "zenstruck_elastica2".', array()),
@@ -109,7 +109,7 @@ class IndexManagerTest extends TestCase
         $this->assertTrue($this->index1->exists());
         $this->assertFalse($this->index2->exists());
 
-        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger = $this->createMock('Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('info')->with('Deleting index "zenstruck_elastica1".', array());
 
         $this->createIndexManager($logger)->delete();
@@ -157,7 +157,23 @@ class IndexManagerTest extends TestCase
 
     public function setUp()
     {
-        $client = new Client(array('host' => 'localhost', 'port' => 9200));
+        $host = getenv('ELASTICSEARCH_HOST');
+        $port = getenv('ELASTICSEARCH_PORT');
+        $transport = getenv('ELASTICSEARCH_TRANSPORT');
+
+        if (!$host) {
+            $host = 'localhost';
+        }
+
+        if (!$port) {
+            $port = 9200;
+        }
+
+        if (!$transport) {
+            $transport = null;
+        }
+
+        $client = new Client(array('host' => $host, 'port' => $port, 'transport' => $transport));
         $this->alias = new Index($client, 'zenstruck_elastica');
         $this->index1 = new Index($client, 'zenstruck_elastica1');
         $this->index2 = new Index($client, 'zenstruck_elastica2');
@@ -182,7 +198,7 @@ class IndexManagerTest extends TestCase
 
     private function createIndexManager(LoggerInterface $logger = null)
     {
-        $documentProvider = $this->getMock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider');
+        $documentProvider = $this->createMock('Zenstruck\ElasticaBundle\Elastica\DocumentProvider');
         $documentProvider->expects($this->any())
             ->method('getDocuments')
             ->willReturn(array(new Document(1, array('title' => 'my document title'))));
