@@ -4,6 +4,15 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="Zenstruck\ElasticaBundle\Command\CreateIndexCommand">
+            <tag name="console.command" />
+        </service>
+        <service id="Zenstruck\ElasticaBundle\Command\DeleteIndexCommand">
+            <tag name="console.command" />
+        </service>
+        <service id="Zenstruck\ElasticaBundle\Command\ReindexIndexCommand">
+            <tag name="console.command" />
+        </service>
         <service id="zenstruck_elastica.index_manager" class="Zenstruck\ElasticaBundle\Elastica\IndexManager">
             <argument type="service" id="zenstruck_elastica.index_context"/>
             <argument type="service" id="logger" on-invalid="null" />

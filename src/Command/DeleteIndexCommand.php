@@ -12,11 +12,11 @@ use Zenstruck\ElasticaBundle\Elastica\IndexManager;
  */
 class DeleteIndexCommand extends ContainerAwareCommand
 {
+    protected static $defaultName = 'zenstruck:elastica:delete';
+
     protected function configure()
     {
-        $this
-            ->setName('zenstruck:elastica:delete')
-            ->setDescription('Delete the elasticsearch index.');
+        $this->setDescription('Delete the elasticsearch index.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

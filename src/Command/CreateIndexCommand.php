@@ -12,11 +12,11 @@ use Zenstruck\ElasticaBundle\Elastica\IndexManager;
  */
 class CreateIndexCommand extends ContainerAwareCommand
 {
+    protected static $defaultName = 'zenstruck:elastica:create';
+
     protected function configure()
     {
-        $this
-            ->setName('zenstruck:elastica:create')
-            ->setDescription('Create and populate the elasticsearch index.');
+        $this->setDescription('Create and populate the elasticsearch index.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

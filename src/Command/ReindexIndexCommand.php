@@ -12,11 +12,11 @@ use Zenstruck\ElasticaBundle\Elastica\IndexManager;
  */
 class ReindexIndexCommand extends ContainerAwareCommand
 {
+    protected static $defaultName = 'zenstruck:elastica:reindex';
+
     protected function configure()
     {
-        $this
-            ->setName('zenstruck:elastica:reindex')
-            ->setDescription('Reindex the elasticsearch index.');
+        $this->setDescription('Reindex the elasticsearch index.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
