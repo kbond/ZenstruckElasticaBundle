@@ -3,8 +3,8 @@
 namespace Zenstruck\ElasticaBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
@@ -35,7 +35,7 @@ class ZenstruckElasticaExtension extends ConfigurableExtension
         $typeContexts = array();
 
         foreach ($mergedConfig['types'] as $alias => $config) {
-            $type = new DefinitionDecorator('zenstruck_elastica.type');
+            $type = new ChildDefinition('zenstruck_elastica.type');
             $type->addArgument($alias);
             $typeId = 'zenstruck_elastica.type.'.$alias;
             $container->setDefinition($typeId, $type);
@@ -46,7 +46,7 @@ class ZenstruckElasticaExtension extends ConfigurableExtension
                 $mapping = new Reference($mapping);
             }
 
-            $typeContext = new DefinitionDecorator('zenstruck_elastica.type_context');
+            $typeContext = new ChildDefinition('zenstruck_elastica.type_context');
             $typeContext->setArguments(
                 array(new Reference($typeId), new Reference($config['service']), $mapping)
             );
