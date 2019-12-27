@@ -13,7 +13,7 @@
         <service id="Zenstruck\ElasticaBundle\Command\ReindexIndexCommand">
             <tag name="console.command" />
         </service>
-        <service id="zenstruck_elastica.index_manager" class="Zenstruck\ElasticaBundle\Elastica\IndexManager">
+        <service id="zenstruck_elastica.index_manager" class="Zenstruck\ElasticaBundle\Elastica\IndexManager" public="true">
             <argument type="service" id="zenstruck_elastica.index_context"/>
             <argument type="service" id="logger" on-invalid="null" />
             <tag name="monolog.logger" channel="elastica" />
