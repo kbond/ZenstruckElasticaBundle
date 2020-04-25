@@ -2,15 +2,13 @@
 
 namespace Zenstruck\ElasticaBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Zenstruck\ElasticaBundle\Elastica\IndexManager;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class DeleteIndexCommand extends ContainerAwareCommand
+class DeleteIndexCommand extends IndexCommand
 {
     protected static $defaultName = 'zenstruck:elastica:delete';
 
@@ -21,9 +19,8 @@ class DeleteIndexCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var IndexManager $indexManager */
-        $indexManager = $this->getContainer()->get('zenstruck_elastica.index_manager');
+        $this->indexManager->delete();
 
-        $indexManager->delete();
+        return 0;
     }
 }

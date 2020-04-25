@@ -5,12 +5,15 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="Zenstruck\ElasticaBundle\Command\CreateIndexCommand">
+            <argument type="service" id="zenstruck_elastica.index_manager" />
             <tag name="console.command" />
         </service>
         <service id="Zenstruck\ElasticaBundle\Command\DeleteIndexCommand">
+            <argument type="service" id="zenstruck_elastica.index_manager" />
             <tag name="console.command" />
         </service>
         <service id="Zenstruck\ElasticaBundle\Command\ReindexIndexCommand">
+            <argument type="service" id="zenstruck_elastica.index_manager" />
             <tag name="console.command" />
         </service>
         <service id="zenstruck_elastica.index_manager" class="Zenstruck\ElasticaBundle\Elastica\IndexManager" public="true">
