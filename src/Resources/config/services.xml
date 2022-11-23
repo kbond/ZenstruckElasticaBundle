@@ -6,15 +6,15 @@
     <services>
         <service id="Zenstruck\ElasticaBundle\Command\CreateIndexCommand">
             <argument type="service" id="zenstruck_elastica.index_manager" />
-            <tag name="console.command" />
+            <tag name="console.command" command="zenstruck:elastica:create" />
         </service>
         <service id="Zenstruck\ElasticaBundle\Command\DeleteIndexCommand">
             <argument type="service" id="zenstruck_elastica.index_manager" />
-            <tag name="console.command" />
+            <tag name="console.command" command="zenstruck:elastica:delete" />
         </service>
         <service id="Zenstruck\ElasticaBundle\Command\ReindexIndexCommand">
             <argument type="service" id="zenstruck_elastica.index_manager" />
-            <tag name="console.command" />
+            <tag name="console.command" command="zenstruck:elastica:reindex" />
         </service>
         <service id="zenstruck_elastica.index_manager" class="Zenstruck\ElasticaBundle\Elastica\IndexManager" public="true">
             <argument type="service" id="zenstruck_elastica.index_context"/>

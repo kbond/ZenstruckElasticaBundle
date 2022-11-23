@@ -10,11 +10,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ReindexIndexCommand extends IndexCommand
 {
-    protected static $defaultName = 'zenstruck:elastica:reindex';
-
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setDescription('Reindex the elasticsearch index.');
+        $this
+            ->setName('zenstruck:elastica:reindex')
+            ->setDescription('Reindex the elasticsearch index.')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -10,11 +10,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CreateIndexCommand extends IndexCommand
 {
-    protected static $defaultName = 'zenstruck:elastica:create';
-
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setDescription('Create and populate the elasticsearch index.');
+        $this
+            ->setName('zenstruck:elastica:create')
+            ->setDescription('Create and populate the elasticsearch index.')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

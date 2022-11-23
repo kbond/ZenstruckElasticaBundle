@@ -10,11 +10,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DeleteIndexCommand extends IndexCommand
 {
-    protected static $defaultName = 'zenstruck:elastica:delete';
-
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setDescription('Delete the elasticsearch index.');
+        $this
+            ->setName('zenstruck:elastica:delete')
+            ->setDescription('Delete the elasticsearch index.')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
