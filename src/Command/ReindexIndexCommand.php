@@ -17,7 +17,7 @@ class ReindexIndexCommand extends IndexCommand
         $this->setDescription('Reindex the elasticsearch index.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->indexManager->reindex();
 

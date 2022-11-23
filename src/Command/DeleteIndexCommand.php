@@ -17,7 +17,7 @@ class DeleteIndexCommand extends IndexCommand
         $this->setDescription('Delete the elasticsearch index.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->indexManager->delete();
 

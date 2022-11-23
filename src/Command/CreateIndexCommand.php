@@ -17,7 +17,7 @@ class CreateIndexCommand extends IndexCommand
         $this->setDescription('Create and populate the elasticsearch index.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->indexManager->create();
 
